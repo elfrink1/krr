@@ -15,14 +15,14 @@ state(1). % Set the initial state to 1.
 % A set of labelled edges (q,q',σ) ∈ Q × Q × Σ.
 % Here I select a subset of the edges, at least one for each provided symbol
 % The full set of edges is implicit.
-% Note that edges in an NFA are one-directional, and can be
+% Note that edges in an NFA are one-directional, and can be reflexive.
 1 { edge(X, Y, Z) : state(X), state(Y) } 1 :- symb(Z).
 
 % A finite set F ⊆ Q of final states. Commented for testing.
 % 1 { final(X) : state(X) }.
 
 % We make sure every state is theoretically reachable from state 1.
-% Note again that edges (and thus reachability) are one-way
+% Note again that edges (and thus reachability) are one-way.
 reachable(1).
 reachable(Y) :- edge(X, Y, Z), reachable(X).
 :- state(X), not reachable(X).

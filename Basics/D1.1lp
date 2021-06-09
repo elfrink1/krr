@@ -1,0 +1,31 @@
+% *On the first day, there were three trials. 
+% In all three, the king explained to the prisoner that each of the 
+% two rooms contained either [chocolate] or a tiger, 
+% but it could be that there were tigers in both rooms, 
+% or [chocolate] in both rooms, or then again, 
+% maybe one room contained [chocolate] and the other room a tiger.*
+
+room(1;2).
+
+% #### First trial
+% There were two signs on the doors of the rooms:
+% - I: In this room there is chocolate, 
+% and in the other room there is a tiger.
+s(1) :- chocolate(1), tiger(2).
+chocolate(1) :- s(1).
+tiger(2) :- s(1).
+
+% - II: In one of these rooms there is chocolate, 
+% and in one of these rooms there is a tiger.
+s(2) :- chocolate(X), tiger(Y).
+both :- chocolate(X), chocolate(Y), X != Y.
+both :- tiger(X), tiger(Y), X != Y.
+:- s(2), both.
+
+% The king moreover said that one of these statements was true, 
+% and the other false.
+s(1) ; s(2).
+:- s(1), s(2).
+
+% If you were the prisoner, which door would you open?
+1 {chocolate(X); tiger(X)} 1 :- room(X).
