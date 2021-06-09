@@ -15,11 +15,10 @@
 #const k=3.
 num(1..k).
 {a(X) : num(X)}.
-1 {max(X) : a(X) } 1.
-:- max(X), a(Y), Y > X.
 c(1, 1).
-c(A+1, X) :- a(X), c(A, Y), a(Y), not c(B, X), num(B).
-% Define count
+c(A+1, Y) :- c(A, X), a(Y), Y > X, not c(A+1, Z), a(Z).  
+
+% Define counting mechanism
 
 % Define even
 
