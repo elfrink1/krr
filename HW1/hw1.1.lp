@@ -27,11 +27,20 @@ reachable(0).
 reachable(Y) :- edge(X, Y, Z), reachable(X).
 :- state(X), not reachable(X).
 
+
 % The input consists of a positive integer k and a set of tuples (w,o)
 %  where w is a finite word over the alphabet Σ and o ∈ { 0,1 }. 
 % word(Word_ID, Index of symbol, Symbol)
-word_id(1..2).
+#const num_words=2.
+word_id(1..num_words).
 
+% % Automatic word generation (unfinished)
+% #const max_length=3.
+% possible_word_length(1..max_length).
+% 1 {word_length(I, N) : possible_word_length(N)} 1 :- word_id(I).
+% 1 { word(I, T, S) : symb(S)} 1 :- word_id(I), word_length(I, N), possible_word_length(T), T <= N.
+
+% Manual word generation.
 word(1, 1, d).
 word(1, 2, o).
 word(1, 3, g).
