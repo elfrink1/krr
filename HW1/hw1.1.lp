@@ -2,13 +2,13 @@
 % of symbols σ1,...,σn, all labels of an edge
 
 #const n=2.
-symb(1..n).
+symb(d;o;g).
 
 % A finite, non-empty set Q of states (k states).
 % An initial state q0 ∈ Q.
 #const k=2.
-possible_state(1..k).
-state(1). % Set the initial state to 1.
+possible_state(0..k).
+state(0). % Set the initial state to 0.
 { state(K) : possible_state(K) } k.
 
 
@@ -19,20 +19,39 @@ state(1). % Set the initial state to 1.
 1 { edge(X, Y, Z) : state(X), state(Y) } 1 :- symb(Z).
 
 % A finite set F ⊆ Q of final states. Commented for testing.
-% 1 { final(X) : state(X) }.
+1 { final_state(X) : state(X) }.
 
 % We make sure every state is theoretically reachable from state 1.
 % Note again that edges (and thus reachability) are one-way.
-reachable(1).
+reachable(0).
 reachable(Y) :- edge(X, Y, Z), reachable(X).
 :- state(X), not reachable(X).
 
 % The input consists of a positive integer k and a set of tuples (w,o)
 %  where w is a finite word over the alphabet Σ and o ∈ { 0,1 }. 
-#const num_w = 1.
-w0(d;o;g).
-w1(d;o).
+% word(Word_ID, Index of symbol, Symbol)
+word_id(1..2).
+
+word(1, 1, d).
+word(1, 2, o).
+word(1, 3, g).
+
+word(2, 1, d).
+word(2, 2, o).
+
+% Word_accepted(Word_ID)
+word_accepted(1).
+
+% Generate paths, set reached(node_ID, word_ID, Timestamp)
+reached(0, 0, I) :- word_id(I).
+reached(A, T+1, I) :- reached(B, T, I), edge(B, A, S), word(I, T+1, S).
+:- not reached(A, T+1, I), reached(B, T, I), edge(B, A, S), word(I, T+1, S).
+:- reached(A, T, I), reached(B, T, I), A != B.
+
+% Set (un)reachable requirement for final states
+good(I) :- final_state(A), reached(A, T, I), not word(I, T+1, _), word_accepted(I).
+:- word_accepted(I), not good(I).
+:- not word_accepted(I), good(I).
 
 #show.
-#show state/1.
-#show edge/3.
+#show good/1.
