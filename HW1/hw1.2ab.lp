@@ -14,14 +14,15 @@ node(1..num_nodes).
 
 % In addition, you are given a subset of roads that need to be repaired (repair requests). 
 % For each repair request, you are given:
-{ : I < num_nodes}
-{ : day(D), X} :- repair(R, D, T, D, S).
 
 % - Which road is to be repaired (i.e., the road segment between which two intersections).
+% repair(repair_id, road_id).
 % - How long this repair takes (e.g., a number of days). The repair should happen on subsequent days.
-%  (Repairs always take a multiple of complete days—in other words, 
+%%  (Repairs always take a multiple of complete days—in other words, 
 %  the granularity of time for this problem is days.)
+%  repair_time(repair_id, num_days)
 % - What tools are needed for this repair (e.g., 1 truck and 1 drill).
+% repair_trucks(repair_id, num_trucks_needed), repair_drills(repair_id, num_drills_needed), etc.
 
 
 % -------------------------------------------------------------------------------
