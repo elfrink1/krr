@@ -51,16 +51,20 @@ word(2, 2, o).
 % Word_accepted(Word_ID)
 word_accepted(1).
 
-% Generate paths, set reached(node_ID, word_ID, Timestamp)
+% Generate paths, set reached(node_ID, Timestamp, word_ID)
 reached(0, 0, I) :- word_id(I).
 reached(A, T+1, I) :- reached(B, T, I), edge(B, A, S), word(I, T+1, S).
 :- not reached(A, T+1, I), reached(B, T, I), edge(B, A, S), word(I, T+1, S).
 :- reached(A, T, I), reached(B, T, I), A != B.
 
 % Set (un)reachable requirement for final states
-good(I) :- final_state(A), reached(A, T, I), not word(I, T+1, _), word_accepted(I).
+good(I) :- final_state(A), reached(A, T, I), not word(I, T+1, _).
 :- word_accepted(I), not good(I).
 :- not word_accepted(I), good(I).
 
-#show.
-#show good/1.
+max_k(K) :- K = #max { N : state(N) }.
+#minimize {K : max_k(K)}.
+
+% #show.
+% #show good/1.
+#show reached/3.
