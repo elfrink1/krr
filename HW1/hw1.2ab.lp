@@ -16,33 +16,25 @@ road_id(1..num_roads).
 % Some roads are one-way, and some roads are two-way (this is specified in the problem input).
 % road(Road_id, B, A) :- road(Road_id, A, B), two_way(Road_id).
 
-
 % In addition, you are given a subset of roads that need to be repaired (repair requests). 
 #const num_repairs=5.
 repair_id(1..num_repairs).
 1 { repair(Rep_id, Road_id) : road_id(Road_id) } 1 :- repair_id(Rep_id).
 { repair(Rep_id, Road_id) : repair_id(Rep_id) } 1 :- road(Road_id, A, B).
 
-% - How long this repair takes (e.g., a number of days). The repair should happen on subsequent days.
-%%  (Repairs always take a multiple of complete days—in other words, 
-%  the granularity of time for this problem is days.)
+% - How long this repair takes (e.g., a number of days). 
 #const max_time=5.
 possible_repair_times(1..max_time).
 1 { repair_time(Rep_id, Num_days) : possible_repair_times(Num_days) } 1 :- repair_id(Rep_id).
 1 { repair_time(Rep_id, Num_days) : repair_id(Rep_id) } 1 :- possible_repair_times(Num_days).
-% You are also given a collection of which repair equipment is available (e.g., 2 trucks and 1 drill).
-% - What tools are needed for this repair (e.g., 1 truck and 1 drill).
-#const num_trucks=3.
-#const num_drills=2.
-#const num_hammers=1.
-choice_num_trucks(0..num_trucks).
-choice_num_drills(0..num_drills).
-choice_num_hammers(0..num_hammers).
 
-1 {repair_trucks(Rep_id, Num_trucks) : choice_num_trucks(Num_trucks)} 1 :- repair_id(Rep_id).
-1 {repair_drills(Rep_id, Num_drills) : choice_num_drills(Num_drills)} 1 :- repair_id(Rep_id).
-1 {repair_hammers(Rep_id, Num_hammers) : choice_num_hammers(Num_hammers)} 1 :- repair_id(Rep_id).
-:- repair_id(Rep_id), repair_trucks(Rep_id, 0), repair_drills(Rep_id, 0), repair_hammers(Rep_id, 0).
+% You are also given a collection of which repair equipment is available (e.g., 2 trucks and 1 drill).
+#const tool_types=4.
+tool(1..tool_types). 
+#const max_number_of_tool=5.
+choice_num_tools(1..max_number_of_tool).
+
+1 { num_tools(Tool_id, Num_tools) : choice_num_tools(Num_tools) } 1 :- tool(Tool_id).
 
 
 % -------------------------------------------------------------------------------
@@ -56,19 +48,23 @@ day(1..possible_days).
 Num_days { repair_on_day(Rep_id, D) : day(D) } Num_days :- repair_id(Rep_id), repair_time(Rep_id, Num_days).
 :- repair_on_day(Rep_id, D), not repair_on_day(Rep_id, D+1), repair_on_day(Rep_id, E), E > D+1.
 
+% We use a generator to assign the number of tools required by each repair. 
+% This could of course be set manually if desired. 
+% Note that the problem will be unsatisfiable if any repair needs more than the max number of a tool.
+choice_repair_tools(0..max_number_of_tool).
+1 { repair_tools(Rep_id, Tool_id, N) : choice_repair_tools(N), N < Num_tools} 1 :- repair_id(Rep_id), num_tools(Tool_id, Num_tools).
+
+% We set the restrictions that each repair needs at least one tool, and that each tool is needed by at least one repair.
+:- repair_id(Rep_id), Sum = #sum {N : repair_tools(Rep_id, _, N)}, Sum = 0.
+:- tool(Tool_id), Sum = #sum {N : repair_tools(_, Tool_id, N)}, Sum = 0.
+
 % - for each day, the total amount of tools needed (for each type of tool) for the repairs
 %  scheduled on that day is less than or equal to the total amount of tools available (of that type),
-trucks_on_day(D, N) :- N = #sum { Num_trucks, repair_trucks(Rep_id, Num_trucks) : repair_on_day(Rep_id, D), repair_trucks(Rep_id, Num_trucks) }, repair_on_day(_, D).
-:- trucks_on_day(D, N), N > num_trucks.
-drills_on_day(D, N) :- N = #sum { Num_drills, repair_drills(Rep_id, Num_drills) : repair_on_day(Rep_id, D), repair_drills(Rep_id, Num_drills)  }, repair_on_day(_, D).
-:- drills_on_day(D, N), N > num_drills.
-hammers_on_day(D, N) :- N = #sum { Num_hammers, repair_hammers(Rep_id, Num_hammers) : repair_on_day(Rep_id, D), repair_hammers(Rep_id, Num_hammers) }, repair_on_day(_, D).
-:- hammers_on_day(D, N), N > num_hammers.
+tools_on_day(Tool_id, D, N) :- N = #sum { Num_tools, repair_tools(Rep_id, Tool_id, Num_tools) : repair_on_day(Rep_id, D), repair_tools(Rep_id, Tool_id, Num_tools) }, tool(Tool_id), repair_on_day(_, D).
+:- tools_on_day(Tool_id, D, N), num_tools(Tool_id, Num_tools), N > Num_tools.
 
 % - the overall amount of days after which all repairs are done is minimal.
 max_day(D) :- D = #max {Day : repair_on_day(_, Day) }.
 #minimize {D : max_day(D)}.
+
 #show repair_on_day/2.
-#show repair_trucks/2.
-#show repair_drills/2.
-#show repair_hammers/2.
