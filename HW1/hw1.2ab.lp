@@ -13,6 +13,13 @@ road_id(1..num_roads).
 1 { road(Road_id, A, B) : node(A), node(B), A != B} 1 :- road_id(Road_id).
 
 
+% We define a reachability requirement for all nodes. 
+% This is strictly speaking not required by the assignment, but seems sensible given the problem context.
+reachable(1).
+reachable(Y) :- road(_, X, Y), reachable(X).
+:- node(X), not reachable(X).
+
+
 % Some roads are one-way, and some roads are two-way (this is specified in the problem input).
 % We leave the code below commented, as it is not useful for part a and b, but remains part of the problem input.
 % road(Road_id, B, A) :- road(Road_id, A, B), two_way(Road_id).
@@ -78,5 +85,8 @@ tools_on_day(Tool_id, D, N) :- N = #sum { Num_tools : repair_on_day(Rep_id, D), 
 max_day(D) :- D = #max {Day : repair_on_day(_, Day) }.
 #minimize {D : max_day(D)}.
 
+#show node/1.
+#show road/3.
+#show repair/2.
 #show repair_on_day/2.
 #show tools_on_day/3.
