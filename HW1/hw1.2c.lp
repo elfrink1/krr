@@ -30,7 +30,7 @@ reachable(Y) :- road(Road_id, X, Y), reachable(X).
 
 num_incoming(X, N) :- node(X), N = #sum{1 : road(Road_id, _, X)}.
 blocked_on_day(X, N, D) :- node(X), day(D), N = #sum{1 : road(Road_id, _, X), repair_id(Rep_id, Road_id), repair_on_day(Rep_id, Day)}.
-not reachable(Y) :- num_incoming(X, N), blocked_on_day(X, N, D).
+not reachable(X) :- num_incoming(X, N), blocked_on_day(X, N, D).
 
 % Some roads are one-way, and some roads are two-way (this is specified in the problem input).
 % We leave the code below commented, as it is not useful for part a and b, but remains part of the problem input.
