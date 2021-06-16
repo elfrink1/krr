@@ -1,0 +1,9 @@
+name: krr
+channels:
+  - defaults
+dependencies:
+  - clingo
+  - ipykernel
+  - jupyter
+  - numpy
+prefix: C:\Users\aukee\miniconda3\envs\krr
