@@ -154,7 +154,7 @@ def check_num_solutions(sudoku, k, num_solutions, solver):
         if not check_solution(sudoku, k, solution):
             return False
         solution_set.add(pretty_repr(solution, k))
-
+    # print(len(solution_set))
     # Return whether the set contains exactly the right amount of solutions
     return len(solution_set) == num_solutions
 

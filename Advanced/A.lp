@@ -20,9 +20,10 @@ node(1..num_nodes).
 
 1 {edge(X, Y) : node(Y), X != Y} num_edges :- node(X).
 
+:- S > num_edges, S = #count{ edge(X, Y) : edge(X, Y)}.
 
-:- S > 2*num_edges, S = #count{ edge(X, Y) : edge(X, Y)}.
-edge(X, Y) :- edge(Y, X).
+% :- S > 2*num_edges, S = #count{ edge(X, Y) : edge(X, Y)}.
+% edge(X, Y) :- edge(Y, X).
 
 reachable(1).
 reachable(Y) :- edge(X, Y), reachable(X).
