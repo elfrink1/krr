@@ -140,7 +140,7 @@ def check_solution(sudoku, k, solution):
     # If all checks passed, return True
     return True
 
-
+ 
 def check_num_solutions(sudoku, k, num_solutions, solver):
     """
     Checks if a given solving algorithm produces the right number of correct
