@@ -29,11 +29,7 @@ s(2) :- empty(2).
 empty(2) :- s(2).
 
 % - *III: Either Sign V is right or Sign VII is wrong.*
-% s(3) :- s(5), s(7).
-% s(3) :- -s(5), -s(7).
 s(5), -s(7) :- s(3).
-% -s(3) :- -s(5), s(7).
-% -s(3) :- s(5), -s(7). 
 s(3) :- s(5).
 s(3) :- -s(7).
 
